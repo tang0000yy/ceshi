@@ -54,6 +54,9 @@ body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFa
 .btn.sel{background:var(--red);color:#fff}
 .btn-perm{background:var(--blue);color:#fff}
 .btn-ghost{background:var(--panel);font-size:12px;min-height:38px}
+.btn-calib{background:var(--purple);color:#fff}
+.btn-calib.pulse{animation:pulseGlow 1s ease-in-out infinite}
+@keyframes pulseGlow{0%,100%{box-shadow:inset 0 4px 0 rgba(255,255,255,.26),inset -4px 0 0 rgba(0,0,0,.14),inset 0 -6px 0 rgba(0,0,0,.22),0 6px 0 rgba(27,36,71,.8)}50%{box-shadow:inset 0 4px 0 rgba(255,255,255,.4),inset -4px 0 0 rgba(0,0,0,.1),inset 0 -6px 0 rgba(0,0,0,.16),0 6px 0 rgba(27,36,71,.8),0 0 0 4px rgba(139,95,191,.35)}}
 
 .dim{font-size:12px;font-weight:700;color:#3a4a6b}
 .debug{background:var(--panel);border:3px solid var(--ink);box-shadow:3px 3px 0 rgba(27,36,71,.7);padding:8px 10px;font-size:11px;font-weight:700;color:#3a4a6b;white-space:pre-line}
@@ -90,6 +93,7 @@ body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFa
 
  <div class="ctl-col">
   <button class="btn btn-perm" id="btnPerm" style="display:none">开启体感识别</button>
+  <button class="btn btn-calib" id="btnCalibrate" style="display:none">🎯 校准平视角度<small>把平板端平、镜头对准前方后点这里</small></button>
 
   <button class="btn sel" data-idx="0">
    平拍<small>镜头与对象齐平</small>
@@ -114,9 +118,11 @@ body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFa
    配置区——上机测试时如果方向反了/阈值不合适，改这几个数字就行
    ============================================================ */
 var TILT_SIGN = 1;        // 如果"仰拍/俯拍"方向反了，把这个改成 -1
-var ENTER_DEG = 30;        // 离开"平拍"需要倾斜超过多少度（进入阈值）
-var EXIT_DEG  = 22;        // 回到"平拍"只需要小于多少度（退出阈值，留缓冲防抖）
-var SMOOTH    = 0.18;      // 角度平滑系数，越小越稳但越"跟手慢"
+var ENTER_DEG = 18;        // 离开"平拍"需要倾斜超过多少度（进入阈值，调小=更灵敏）
+var EXIT_DEG  = 10;        // 回到"平拍"只需要小于多少度（退出阈值，留缓冲防抖）
+var SMOOTH    = 0.35;      // 角度平滑系数，越大越"跟手快"但越容易抖；越小越稳但越迟钝
+var HOLD_MS   = 90;        // 超过阈值需要持续这么久才真正切换，过滤手抖/单帧噪声
+var AUTO_CALIB_SAMPLES = 12; // 传感器启动后自动采样多少帧来定"平拍"基准
 
 /* ============================================================ */
 var $ = function(s){return document.querySelector(s)};
@@ -124,13 +130,18 @@ var photos = [$('#photoLevel'), $('#photoLow'), $('#photoHigh')];
 var fallbacks = document.querySelectorAll('.vf-fallback');
 var manualBtns = document.querySelectorAll('.ctl-col .btn[data-idx]');
 var badge = $('#vfBadge'), modeEl = $('#vfMode'), debugEl = $('#debug');
+var btnCalibrate = $('#btnCalibrate');
 var names = ['平拍','仰拍','俯拍'];
 
 var mode = 'auto';        // 'auto' | 'manual'
 var current = 0;          // 当前显示 0平拍/1仰拍/2俯拍
 var sensorActive = false;
 var smoothedAngle = null;
-var baseline = 90;        // 竖直握持时的"水平"基准角度，可通过校准按钮重设
+var baseline = null;       // 竖直握持时的"水平"基准角度——不再写死90，靠自动采样/手动校准得到
+var calibrated = false;    // 是否已经完成过一次校准（自动或手动）
+var autoCalibBuf = [];     // 启动阶段自动采样缓冲区
+var pendingIdx = null;     // 正在等待"持续超过阈值"确认的候选状态
+var pendingSince = 0;
 
 function showToast(msg){
  var t=$('#toast'); t.textContent=msg; t.classList.add('on');
@@ -158,7 +169,16 @@ manualBtns.forEach(function(b){
 $('#btnAuto').addEventListener('click', function(){
  mode = 'auto';
  $('#btnAuto').style.display = 'none';
- modeEl.textContent = sensorActive ? '自动体感识别中' : '正在等待传感器数据…';
+ modeEl.textContent = sensorActive ? '自动体感识别中（可随时点击"校准平视角度"重新对准）' : '正在等待传感器数据…';
+});
+btnCalibrate.addEventListener('click', function(){
+ mode = 'auto';
+ $('#btnAuto').style.display = 'none';
+ if(smoothedAngle!==null){
+  doCalibrate(smoothedAngle, false);
+ } else {
+  showToast('还没收到传感器数据，请稍等一下再校准');
+ }
 });
 
 /* ============================================================
@@ -175,10 +195,20 @@ function compensatedTilt(beta, gamma, screenAngle){
  return beta; // 0° 竖屏
 }
 
+function doCalibrate(fromAngle, silent){
+ baseline = fromAngle;
+ calibrated = true;
+ pendingIdx = null;
+ if(mode==='auto') setActive(0); // 校准即认定此刻为"平拍"
+ btnCalibrate.classList.remove('pulse');
+ if(!silent) showToast('已校准！当前角度已设为"平拍"基准');
+}
+
 function onOrientation(e){
  if(e.beta===null || e.beta===undefined) return; // 部分浏览器会先发一次空事件
  sensorActive = true;
  $('#btnPerm').style.display='none';
+ btnCalibrate.style.display='block';
 
  var screenAngle = (screen.orientation && typeof screen.orientation.angle==='number')
    ? screen.orientation.angle
@@ -187,24 +217,54 @@ function onOrientation(e){
  var raw = compensatedTilt(e.beta, e.gamma, screenAngle);
  smoothedAngle = (smoothedAngle===null) ? raw : smoothedAngle + SMOOTH*(raw-smoothedAngle);
 
+ // 启动阶段：还没校准过，自动采样几帧，取平均值当基准，
+ // 这样不用非得先点按钮——但用户随时可以点"校准"按钮重新对准
+ if(!calibrated){
+  autoCalibBuf.push(smoothedAngle);
+  if(autoCalibBuf.length===1){
+   btnCalibrate.classList.add('pulse');
+   modeEl.textContent = '正在自动校准，请保持平板端平…';
+  }
+  if(autoCalibBuf.length>=AUTO_CALIB_SAMPLES){
+   var sum=0; for(var i=0;i<autoCalibBuf.length;i++) sum+=autoCalibBuf[i];
+   doCalibrate(sum/autoCalibBuf.length, true);
+   modeEl.textContent = '自动体感识别中（已自动校准，如不准可点击"校准平视角度"）';
+  } else {
+   debugEl.textContent = '自动校准中… ('+autoCalibBuf.length+'/'+AUTO_CALIB_SAMPLES+')';
+   return;
+  }
+ }
+
  var delta = (smoothedAngle - baseline) * TILT_SIGN;
 
  debugEl.textContent =
   'beta:'+e.beta.toFixed(1)+'  gamma:'+e.gamma.toFixed(1)+'  screenAngle:'+screenAngle+
-  '\n平滑角度:'+smoothedAngle.toFixed(1)+'  与基准差:'+delta.toFixed(1)+'°'+
+  '\n平滑角度:'+smoothedAngle.toFixed(1)+'  基准:'+baseline.toFixed(1)+'  与基准差:'+delta.toFixed(1)+'°'+
   '\n当前判定:'+names[current]+'  模式:'+(mode==='auto'?'自动':'手动');
 
  if(mode!=='auto') return; // 手动模式下只更新调试信息，不切照片
 
- modeEl.textContent = '自动体感识别中';
- // 带缓冲区的三段判定，防止在临界角度反复横跳
+ modeEl.textContent = '自动体感识别中（可随时点击"校准平视角度"重新对准）';
+
+ // 带缓冲区的三段判定 + 持续时间确认，防止单帧噪声/手抖造成误判
+ var wantIdx = current;
  if(current===0){
-  if(delta >  ENTER_DEG) setActive(1);
-  else if(delta < -ENTER_DEG) setActive(2);
+  if(delta >  ENTER_DEG) wantIdx = 1;
+  else if(delta < -ENTER_DEG) wantIdx = 2;
  } else if(current===1){
-  if(delta <  EXIT_DEG) setActive(0);
+  if(delta <  EXIT_DEG) wantIdx = 0;
  } else if(current===2){
-  if(delta > -EXIT_DEG) setActive(0);
+  if(delta > -EXIT_DEG) wantIdx = 0;
+ }
+
+ if(wantIdx===current){
+  pendingIdx = null;
+ } else if(wantIdx!==pendingIdx){
+  pendingIdx = wantIdx;
+  pendingSince = Date.now();
+ } else if(Date.now()-pendingSince >= HOLD_MS){
+  setActive(wantIdx);
+  pendingIdx = null;
  }
 }
 
@@ -214,6 +274,7 @@ function startListening(){
   if(!sensorActive){
    modeEl.textContent = '未检测到传感器数据，已切换为按钮模式';
    $('#btnAuto').style.display = 'none';
+   btnCalibrate.style.display = 'none';
    showToast('这台设备/浏览器没有返回方向数据，请用右侧按钮手动切换');
   }
  }, 2500);
