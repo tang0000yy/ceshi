@@ -17,7 +17,7 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;height:100%;overflow:hidden}
-body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;font-size:17px;line-height:1.5;color:var(--ink);touch-action:manipulation}
+body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;font-size:16px;line-height:1.5;color:var(--ink);touch-action:manipulation}
 
 /* ---- 天空 / 地面 / CRT 扫描线（固定背景装饰，所有页面共用） ---- */
 #sky{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
@@ -28,10 +28,10 @@ body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFa
 .c2{top:18%;animation:drift 64s linear infinite;animation-delay:-30s;transform:scale(.8)}
 .c3{top:34%;animation:drift 80s linear infinite;animation-delay:-50s;transform:scale(1.2)}
 @keyframes drift{from{left:-120px}to{left:105%}}
-#ground{position:fixed;left:0;right:0;bottom:0;height:72px;z-index:4;pointer-events:none;background-color:var(--grass);
+#ground{position:fixed;left:0;right:0;bottom:0;height:36px;z-index:4;pointer-events:none;background-color:var(--grass);
  background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.10) 0 48px,rgba(255,255,255,.08) 48px 96px),linear-gradient(0deg,rgba(0,0,0,.20) 0 16px,transparent 16px),linear-gradient(180deg,rgba(255,255,255,.22) 0 12px,transparent 12px);
  border-top:5px solid var(--ink)}
-#ground::before{content:'';position:absolute;left:0;right:0;top:56px;height:16px;background-color:var(--dirt);
+#ground::before{content:'';position:absolute;left:0;right:0;top:20px;height:16px;background-color:var(--dirt);
  background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 48px,rgba(255,255,255,.06) 48px 96px);border-top:4px solid rgba(27,36,71,.35)}
 #crt{position:fixed;inset:0;z-index:90;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px)}
 
@@ -42,17 +42,11 @@ body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFa
        不能溢出，也不能大片留白。
    ======================================================== */
 #app{position:fixed;inset:0;z-index:3}
-/* 滚动兜底：每一页的量身计算在绝大多数设备上都是精确贴合、不会出现滚动条的，
-   但没法保证在所有没测过的浏览器内核/系统缩放下都分毫不差。这里只把
-   overflow-y:auto 加在"每一页真正装内容的那个容器"上（不是最外层的 .view，
-   那样会连带把帷幕这类故意滑出屏幕的装饰元素也算成"可滚动内容"，出现没有意义
-   的滚动条）——这样万一某台设备上真的算出偏差，至少还能滚动找到按钮，
-   而不是被 .view 的 overflow:hidden 彻底裁掉、无法触达 */
-.l1-wrap,.l2-wrap,.l3-wrap,.l4-wrap,.l5-wrap,.l6-wrap,.l7-wrap,.l8-wrap,.wu-wrap,.l10-wrap,.l12-wrap,.l13-wrap,.home-content{
- overflow-y:auto;overflow-x:hidden;max-height:100%;
-}
-.view{position:absolute;inset:0;overflow:hidden;display:none}
-.view.on{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;animation:viewIn .3s steps(5)}
+/* 手机竖屏版：滚动统一交给最外层 .view 处理（见下面 .view 规则），
+   内层每一页的容器不再单独设置 overflow/max-height，让内容按自然高度撑开、
+   由外层 .view 整体滚动，避免出现双重滚动容器 */
+.view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;-webkit-overflow-scrolling:touch}
+.view.on{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px 12px 44px;animation:viewIn .3s steps(5);min-height:100%}
 @keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .wrap{width:100%;max-width:780px;margin:0 auto;max-height:100%}
 
@@ -87,7 +81,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 
 #roomBadge{position:fixed;left:14px;top:12px;z-index:60;background:var(--panel);border:4px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:6px 12px;font-weight:900;font-size:14px;display:none;align-items:center;gap:6px}
 #roomBadge.on{display:flex}
-#teacherCtl{position:fixed;left:14px;bottom:14px;z-index:60;display:none;flex-direction:column;gap:10px}
+#teacherCtl{position:fixed;left:14px;bottom:44px;z-index:60;display:none;flex-direction:column;gap:10px}
 #teacherCtl.on{display:flex}
 #teacherCtl .btn{min-height:46px;padding:8px 16px;font-size:15px;box-shadow:3px 3px 0 var(--ink),inset 0 3px 0 rgba(255,255,255,.26),inset 0 -4px 0 rgba(0,0,0,.2)}
 /* 上一页 / 下一页：并排的两个小按钮，按页切换，区别于"关卡跳转" */
@@ -117,11 +111,11 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .title-scene{position:relative;text-align:center;padding:20px 10px;width:100%;max-width:min(94vw,1180px)}
 .title-house{position:absolute;left:50%;top:-18px;transform:translateX(-50%);opacity:.9;z-index:0;pointer-events:none}
 .title-house svg{width:min(20vw,260px);height:auto;display:block}
-.game-title{position:relative;z-index:2;margin:12px 0 0;font-weight:900;letter-spacing:4px;font-size:min(9vw,92px);color:#fff;
+.game-title{position:relative;z-index:2;margin:12px 0 0;font-weight:900;letter-spacing:4px;font-size:92px;color:#fff;
  text-shadow:3px 0 #1b2447,-3px 0 #1b2447,0 3px #1b2447,0 -3px #1b2447,3px 3px #1b2447,-3px 3px #1b2447,3px -3px #1b2447,-3px -3px #1b2447,0 5px 0 #3a4a6b,0 8px 0 #2b3752,0 11px 0 #1b2447,0 14px 10px rgba(0,0,0,.35)}
-.splash{position:relative;z-index:3;display:inline-block;color:var(--coin);font-weight:900;font-size:min(2.6vw,30px);font-style:italic;transform:rotate(-8deg);text-shadow:2px 2px 0 var(--ink);animation:splashPulse 1s ease-in-out infinite}
+.splash{position:relative;z-index:3;display:inline-block;color:var(--coin);font-weight:900;font-size:30px;font-style:italic;transform:rotate(-8deg);text-shadow:2px 2px 0 var(--ink);animation:splashPulse 1s ease-in-out infinite}
 @keyframes splashPulse{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(-8deg) scale(1.08)}}
-.subtitle{position:relative;z-index:2;margin:10px 0 18px;color:#fff;font-weight:900;font-size:min(2.4vw,22px);letter-spacing:1px;text-shadow:2px 0 var(--ink),-2px 0 var(--ink),0 2px var(--ink),0 -2px var(--ink),2px 2px var(--ink)}
+.subtitle{position:relative;z-index:2;margin:10px 0 18px;color:#fff;font-weight:900;font-size:22px;letter-spacing:1px;text-shadow:2px 0 var(--ink),-2px 0 var(--ink),0 2px var(--ink),0 -2px var(--ink),2px 2px var(--ink)}
 #btnEnter{position:relative;z-index:2;animation:enterGlow 1.4s ease-in-out infinite}
 @keyframes enterGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.12)}}
 .title-tip{position:relative;z-index:2;margin-top:10px;color:#2b3752;font-weight:700;font-size:13px;text-shadow:1px 1px 0 rgba(255,255,255,.6)}
@@ -178,24 +172,24 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    页面③：第一关 · 摄影师，首先要学会观察（v-l1）
    ======================================================== */
 #v-l1.on{display:flex;flex-direction:column;padding:16px 16px 84px}
-.l1-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:6px}
+.l1-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:6px}
 .l1-head{flex:0 0 auto;text-align:center}
 .l1-chip{display:inline-block;background:var(--coin);border:3px solid var(--ink);padding:3px 12px;font-weight:900;box-shadow:3px 3px 0 var(--ink);font-size:13px;letter-spacing:1px}
-.l1-title{margin:8px 0 0;font-weight:900;font-size:min(4vw,36px);color:#fff;
+.l1-title{margin:8px 0 0;font-weight:900;font-size:36px;color:#fff;
  text-shadow:2px 0 var(--ink),-2px 0 var(--ink),0 2px var(--ink),0 -2px var(--ink),2px 2px var(--ink),-2px 2px var(--ink),2px -2px var(--ink),-2px -2px var(--ink)}
 .l1-stage{position:relative;flex:1;min-height:0}
 
 .l1-countwrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:22px;transition:opacity .4s ease;}
 .l1-countwrap.hidden{opacity:0;pointer-events:none}
-.l1-num{font-weight:900;line-height:1;font-size:min(26vw,300px);color:#fff;letter-spacing:2px;
+.l1-num{font-weight:900;line-height:1;font-size:110px;color:#fff;letter-spacing:2px;
  text-shadow:4px 0 var(--ink),-4px 0 var(--ink),0 4px var(--ink),0 -4px var(--ink),4px 4px var(--ink),-4px 4px var(--ink),4px -4px var(--ink),-4px -4px var(--ink),0 8px 0 rgba(27,36,71,.35)}
-.l1-play{width:min(9vw,140px);height:min(9vw,140px);border:6px solid var(--ink);background:var(--coin);color:var(--ink);font-size:min(4vw,52px);cursor:pointer;
+.l1-play{width:68px;height:68px;border:6px solid var(--ink);background:var(--coin);color:var(--ink);font-size:26px;cursor:pointer;
  display:flex;align-items:center;justify-content:center;padding-left:6px;
  box-shadow:5px 5px 0 rgba(27,36,71,.85),inset 0 5px 0 rgba(255,255,255,.3),inset 0 -7px 0 rgba(0,0,0,.22)}
 .l1-play:active{transform:translate(3px,3px);box-shadow:2px 2px 0 rgba(27,36,71,.85)}
 
 .l1-qmain{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(1);width:88%;max-width:min(70vw,820px);
- font-weight:900;font-size:min(6.5vw,30px);color:var(--ink);background:var(--panel);border:5px solid var(--ink);
+ font-weight:900;font-size:30px;color:var(--ink);background:var(--panel);border:5px solid var(--ink);
  box-shadow:6px 6px 0 rgba(27,36,71,.85);padding:26px 20px;text-align:center;cursor:pointer;opacity:0;
  transition:opacity .35s ease,transform .35s ease}
 .l1-qmain.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -208,10 +202,10 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l1-qlist.hidden{display:none}
 .l1-qlist.up{top:14px;transform:translate(-50%,0);flex-direction:row;flex-wrap:nowrap;max-width:min(92vw,1500px);width:96%;gap:8px}
 .l1-q-item{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease,font-size .6s ease,padding .6s ease;
- font-weight:900;font-size:min(4.6vw,19px);color:var(--ink);background:var(--panel2);border:4px solid var(--ink);
+ font-weight:900;font-size:19px;color:var(--ink);background:var(--panel2);border:4px solid var(--ink);
  box-shadow:4px 4px 0 rgba(27,36,71,.8);padding:12px 16px;text-align:center}
 .l1-q-item.show{opacity:1;transform:translateY(0)}
-.l1-qlist.up .l1-q-item{flex:1 1 0;min-width:0;font-size:min(2.6vw,12px);padding:8px 8px;box-shadow:3px 3px 0 rgba(27,36,71,.8)}
+.l1-qlist.up .l1-q-item{flex:1 1 0;min-width:0;font-size:12px;padding:8px 8px;box-shadow:3px 3px 0 rgba(27,36,71,.8)}
 
 /* ---- 30秒结束后：像素相机 · 对焦动画 · 快门 ---- */
 .l1-camstage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:camUnlock .7s cubic-bezier(.2,.85,.28,1) forwards}
@@ -278,21 +272,14 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    页面④：第二关 · 练习景别（v-l2）
    ======================================================== */
 #v-l2.on{display:flex;flex-direction:column;padding:16px 16px 84px}
-.l2-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:8px}
+.l2-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:8px}
 .l2-head{flex:0 0 auto;text-align:center}
 /* 整体（取景框+右侧记录区）作为一组在页面里居中，并且限制一个上限宽度——
    宽屏下不再顶着 98vw 把取景框撑得巨大、右侧却留出一大片空白 */
 .l2-stage{flex:1;min-height:0;display:flex;gap:16px;align-items:center;justify-content:center;max-width:1180px;width:100%;margin:0 auto}
 /* 竖屏/窄屏（比如平板竖放）：横向两栏放不开，改成上下堆叠，
    这样取景框仍然能用满宽度，右侧记录区跟在下面 */
-@media (max-aspect-ratio:4/5){
- .l2-stage{flex-direction:column;justify-content:center}
- .l2-right{width:85%;max-width:none;flex:none}
- .l2-slots{grid-template-columns:1fr 1fr}
- .l2-slot{aspect-ratio:auto;height:9vh}
- .l2-opt{padding:5px 10px;font-size:min(2.6vw,15px)}
- .l2-right{gap:8px}
-}
+
 
 /* 左侧：固定尺寸取景框 + 同宽滑竿——尺寸只由 vw/vh 决定，
    不受右侧内容多少影响，始终是页面视觉主体 */
@@ -344,7 +331,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .thumb-2{background:#f2e2b6;background-image:radial-gradient(#7ec8f0 40%,transparent 42%);background-size:26% 26%}
 .thumb-3{background-color:#c98a5a;background-image:repeating-linear-gradient(0deg,#1b2447 0 2px,transparent 2px 12px),repeating-linear-gradient(90deg,#1b2447 0 2px,transparent 2px 22px)}
 .l2-opts{display:flex;flex-direction:column;gap:10px}
-.l2-opt{font-weight:900;font-size:min(1.4vw,18px);color:var(--ink);background:var(--panel2);border:3px solid var(--ink);box-shadow:3px 3px 0 rgba(27,36,71,.8);
+.l2-opt{font-weight:900;font-size:18px;color:var(--ink);background:var(--panel2);border:3px solid var(--ink);box-shadow:3px 3px 0 rgba(27,36,71,.8);
  padding:6px 10px;text-align:center;cursor:pointer}
 .l2-opt.done{background:#bfe6b0;position:relative;cursor:default}
 .l2-opt.done::after{content:'✓';position:absolute;right:10px;top:5px;color:#2c7a2c;font-weight:900}
@@ -357,7 +344,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
       名称大字号+要点精简三行，再点一下（或点别的照片）收起
    ======================================================== */
 #v-l3.on{padding:14px 14px 84px}
-.l3-wrap{width:100%;max-width:1300px;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:8px}
+.l3-wrap{width:100%;max-width:1300px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:8px}
 .l3-grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:5px;
  background:var(--ink);border:5px solid var(--ink);box-shadow:6px 6px 0 rgba(27,36,71,.85);overflow:hidden}
 .l3-tile{position:relative;overflow:hidden;cursor:pointer;background:#000}
@@ -387,17 +374,11 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    选错：选项抖动 + 提示语。两题都过后解锁"下一关"。
    ======================================================== */
 #v-l4.on{padding:14px 14px 84px}
-.l4-wrap{width:100%;max-width:1300px;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:6px}
-.l4-stage{flex:1;min-height:0;display:flex;gap:16px;align-items:stretch}
+.l4-wrap{width:100%;max-width:1300px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:6px}
+.l4-stage{flex:0 0 auto;display:flex;gap:16px;align-items:stretch}
 .l4-left{flex:1.15;min-width:0;display:flex}
 .l4-right{flex:.85;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:16px}
-@media (max-aspect-ratio:4/5){
- .l4-stage{flex-direction:column}
- .l4-left{flex:1.3}
- .l4-right{flex:none;width:100%;gap:10px}
- .l4-opts{flex-direction:row;flex-wrap:wrap}
- .l4-opt{flex:1 1 40%;padding:10px 8px;font-size:min(3.4vw,15px)}
-}
+
 
 /* 左侧：模拟公众号文章卡片 */
 .wechat-mock{flex:1;min-width:0;background:#fff;border:4px solid var(--ink);box-shadow:5px 5px 0 rgba(27,36,71,.8);display:flex;flex-direction:column;overflow:hidden}
@@ -406,7 +387,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .wechat-account{font-weight:900;font-size:13px;color:#222}
 .wechat-time{margin-left:auto;font-size:11px;color:#999;font-weight:700}
 .wechat-body{flex:1;min-height:0;padding:14px 14px 18px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
-.wechat-caption{font-size:min(4.2vw,32px);font-weight:700;color:#333;line-height:1.7}
+.wechat-caption{font-size:32px;font-weight:700;color:#333;line-height:1.7}
 
 /* 灰卡问号（马里奥问号砖风格）—— 横板 4:3（照片是横屏拍的，配图卡片跟着做成横板，
    和图鉴页 .l2-slot / .cam-view 的 4:3 保持一致） */
@@ -417,14 +398,14 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l4-qcard.hidden{visibility:hidden}
 .l4-qmark-box{width:100%;height:100%;background:#c7c7c7;border:4px solid var(--ink);
  box-shadow:inset 0 4px 0 rgba(255,255,255,.4),inset 0 -6px 0 rgba(0,0,0,.22),4px 4px 0 rgba(27,36,71,.8);
- display:flex;align-items:center;justify-content:center;font-weight:900;font-size:min(13vw,116px);color:var(--coin);
+ display:flex;align-items:center;justify-content:center;font-weight:900;font-size:116px;color:var(--coin);
  text-shadow:2px 0 var(--ink),-2px 0 var(--ink),0 2px var(--ink),0 -2px var(--ink),2px 2px var(--ink),-2px 2px var(--ink),2px -2px var(--ink),-2px -2px var(--ink);
  animation:l4QBounce 1.1s ease-in-out infinite}
 @keyframes l4QBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
 /* 右侧：四个景别选项 */
 .l4-opts{display:flex;flex-direction:column;gap:10px}
-.l4-opt{font-weight:900;font-size:min(1.8vw,19px);color:var(--ink);background:var(--panel2);border:4px solid var(--ink);
+.l4-opt{font-weight:900;font-size:19px;color:var(--ink);background:var(--panel2);border:4px solid var(--ink);
  box-shadow:4px 4px 0 rgba(27,36,71,.8);padding:14px 12px;text-align:center;cursor:pointer}
 .l4-opt:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(27,36,71,.8)}
 .l4-opt.correct{background:#bfe6b0}
@@ -457,7 +438,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    带来的画面变化和相机转向，让学生直观感受三种角度
    ======================================================== */
 #v-l5.on{display:flex;flex-direction:column;padding:16px 16px 84px}
-.l5-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:8px}
+.l5-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:8px}
 .l5-stage{flex:1;min-height:0;display:flex;gap:24px;align-items:stretch;justify-content:center;max-width:1180px;width:100%;margin:0 auto}
 
 /* 左：相机可以上下移动的十字基准区——横竖两条线在 subject 眼睛高度
@@ -491,16 +472,12 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 
 .l5-continue-row{flex:0 0 auto;display:flex;justify-content:center;padding-top:8px}
 
-@media (max-aspect-ratio:4/5){
- .l5-stage{flex-direction:column;align-items:center}
- .l5-rig{width:85%;flex:1;min-height:160px}
- .l5-vfwrap{width:85%}
-}
+
 /* ========================================================
    页面⑧：视角判断 · 四张实拍照片选角度（v-l6）
    ======================================================== */
 #v-l6.on{display:flex;flex-direction:column;padding:16px 16px 84px}
-.l6-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:8px}
+.l6-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:8px}
 .l6-grid{flex:1;min-height:0;display:flex;flex-direction:row;justify-content:center;align-items:center;gap:14px;width:100%;margin:0 auto}
 .l6-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:0}
 .l6-photo-box{position:relative;background:#000;border:5px solid var(--ink);box-shadow:5px 5px 0 rgba(27,36,71,.8);overflow:hidden;flex:none}
@@ -512,16 +489,14 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l6-fb-3{background:linear-gradient(0deg,#e5453c 0%,#e5453c 55%,#f2a89f 55%,#f2a89f 100%)}
 .l6-card.done .l6-photo-box{border-color:#2c7a2c}
 .l6-opts{display:flex;gap:6px;flex:0 0 auto}
-.l6-opt{flex:1;min-height:38px;border:3px solid var(--ink);background:var(--panel2);font-weight:900;font-size:min(1.6vw,14px);color:var(--ink);
+.l6-opt{flex:1;min-height:38px;border:3px solid var(--ink);background:var(--panel2);font-weight:900;font-size:14px;color:var(--ink);
  font-family:inherit;cursor:pointer;box-shadow:2px 2px 0 rgba(27,36,71,.7)}
 .l6-opt.done{background:#bfe6b0;cursor:default}
 .l6-opt.wrong{animation:l6Shake .3s}
 .l6-card.locked .l6-opt:not(.done){opacity:.5;cursor:default}
 @keyframes l6Shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .l6-continue-row{flex:0 0 auto;display:flex;justify-content:center;padding-top:6px}
-@media (max-aspect-ratio:4/5){
- .l6-grid{flex-direction:column}
-}
+
 
 /* ========================================================
    页面⑨：第四关 · 摄影师的光影实验室（v-l7）
@@ -529,13 +504,13 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    intro（大图提问）→ compare（拖动对比）→ punch（点题）→ task（任务）
    ======================================================== */
 #v-l7.on{display:flex;flex-direction:column;padding:16px 16px 84px}
-.l7-wrap{width:100%;max-width:960px;margin:0 auto;height:100%;position:relative}
+.l7-wrap{width:100%;max-width:960px;margin:0 auto;min-height:100%;position:relative}
 .l7-stage{display:none;position:absolute;inset:0;flex-direction:column;gap:10px}
 .l7-wrap[data-l7state="intro"] .l7-stage-intro,
 .l7-wrap[data-l7state="compare"] .l7-stage-compare,
 .l7-wrap[data-l7state="punch"] .l7-stage-punch,
 .l7-wrap[data-l7state="task"] .l7-stage-task{display:flex;animation:viewIn .3s steps(5)}
-.l7-sub{text-align:center;margin-top:4px;font-weight:900;color:var(--ink);text-shadow:1px 1px 0 #fff;font-size:min(3vw,17px)}
+.l7-sub{text-align:center;margin-top:4px;font-weight:900;color:var(--ink);text-shadow:1px 1px 0 #fff;font-size:17px}
 
 /* 状态①：普通光线大图 */
 .l7-photo-wrap{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
@@ -591,30 +566,26 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l7-stage-punch{justify-content:center;align-items:center}
 .l7-punch-lines{text-align:center}
 .l7-punch-line{opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease;
- font-weight:900;font-size:min(4vw,26px);color:var(--ink);text-shadow:1px 1px 0 #fff}
+ font-weight:900;font-size:26px;color:var(--ink);text-shadow:1px 1px 0 #fff}
 .l7-punch-line.show{opacity:1;transform:none}
 .l7-punch-word{opacity:0;transform:scale(.6);transition:opacity .4s ease,transform .45s cubic-bezier(.34,1.6,.4,1);
- margin-top:6px;font-weight:900;font-size:min(9vw,64px);color:#fff;
+ margin-top:6px;font-weight:900;font-size:64px;color:#fff;
  text-shadow:3px 0 var(--ink),-3px 0 var(--ink),0 3px var(--ink),0 -3px var(--ink),3px 3px var(--ink),-3px 3px var(--ink),3px -3px var(--ink),-3px -3px var(--ink)}
 .l7-punch-word.show{opacity:1;transform:scale(1)}
 .l7-punch-word span{color:var(--coin)}
 .l7-summary{margin-top:22px;opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease;display:flex;flex-direction:column;gap:6px;align-items:center}
 .l7-summary.show{opacity:1;transform:none}
-.l7-summary-row{font-weight:700;font-size:min(3vw,16px);color:#3a4a6b}
+.l7-summary-row{font-weight:700;font-size:16px;color:#3a4a6b}
 .l7-summary-row.l7-summary-hi{color:var(--ink);font-weight:900}
 #l7PunchContinue{opacity:0;pointer-events:none;transition:opacity .3s ease;margin-top:22px}
 #l7PunchContinue.show{opacity:1;pointer-events:auto}
 
 /* 状态④：摄影师任务 */
 .l7-stage-task{justify-content:center;align-items:center;text-align:center}
-.l7-steps{font-weight:900;font-size:min(3.2vw,18px);color:var(--ink);background:var(--panel);border:3px solid var(--ink);
+.l7-steps{font-weight:900;font-size:18px;color:var(--ink);background:var(--panel);border:3px solid var(--ink);
  box-shadow:3px 3px 0 var(--ink);padding:8px 16px;display:inline-block;margin:14px 0}
 
-@media (max-aspect-ratio:4/5){
- .l7-observe-row{gap:6px}
- .l7-observe-btn{min-width:60px;font-size:14px}
- .l7-steps{font-size:14px}
-}
+
 /* ========================================================
    页面⑨：户外实拍 · 真实摄像头拍摄（v-l8）
    ------------------------------------------------------------
@@ -623,13 +594,13 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    轻微变化，都不会让中央相机跟着变化。
    ======================================================== */
 #v-l8.on{display:flex;flex-direction:column;padding:16px 16px 84px}
-.l8-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:4px}
+.l8-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:4px}
 .l8-sub{font-size:13px;font-weight:700;color:#3a4a6b;margin-top:2px}
 
-.l8-stage{position:relative;flex:1;min-height:0}
+.l8-stage{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
 
 /* ---- 中央相机：固定尺寸（由JS一次性算好写死），绝对居中 ---- */
-.l8-camera{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5}
+.l8-camera{position:relative;order:1;margin:0 auto}
 .l8-cam-top{position:absolute;left:8%;top:-6%;width:26%;height:9%;background:#eef0f3;border:5px solid var(--ink);border-bottom:none;z-index:1}
 .l8-cam-top::after{content:'';position:absolute;right:14%;top:30%;width:16%;height:35%;border-radius:50%;background:#c7ccd4;border:2px solid var(--ink)}
 .l8-cam-body{position:relative;width:100%;height:100%;background:#f4f5f7;border:5px solid var(--ink);box-shadow:6px 6px 0 rgba(27,36,71,.35);
@@ -641,7 +612,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l8-viewfinder{position:relative;width:100%;flex:1;min-height:0;aspect-ratio:4/3;background:#0c0f14;border:4px solid var(--ink);overflow:hidden}
 .l8-viewfinder video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
 .l8-vf-msg{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;
- background:rgba(18,22,38,.94);color:#fff;text-align:center;padding:5% 8%;font-weight:700;font-size:min(2.2vw,15px);line-height:1.6}
+ background:rgba(18,22,38,.94);color:#fff;text-align:center;padding:5% 8%;font-weight:700;font-size:15px;line-height:1.6}
 .l8-vf-msg.show{display:flex}
 .l8-vf-msg .btn{font-size:13px;min-height:40px;padding:6px 16px}
 .l8-count{position:absolute;right:8px;bottom:6px;color:#fff;font-size:11px;font-weight:900;background:rgba(0,0,0,.45);padding:2px 9px;letter-spacing:.5px;z-index:3}
@@ -657,10 +628,10 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l8-shutter:disabled{opacity:.4;cursor:not-allowed}
 
 /* ---- 左右照片墙：绝对定位，不参与相机布局；每侧2列 ---- */
-.l8-rack{position:absolute;top:2%;bottom:2%;width:21%;min-width:118px;max-width:210px;z-index:3}
-.l8-rack-left{left:0}
-.l8-rack-right{right:0}
-.l8-polaroid{position:absolute;background:#fff;border:1px solid #e2e2e2;box-shadow:2px 3px 8px rgba(0,0,0,.28);
+.l8-rack{position:static;width:100%;max-width:340px;display:flex;flex-wrap:wrap;gap:16px 12px;justify-content:center;padding:4px 0}
+.l8-rack-left{order:2}
+.l8-rack-right{order:3}
+.l8-polaroid{position:relative;background:#fff;border:1px solid #e2e2e2;box-shadow:2px 3px 8px rgba(0,0,0,.28);
  padding:6% 6% 20% 6%;cursor:pointer;box-sizing:border-box}
 .l8-polaroid img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#ccc;transform:scaleX(-1)}
 .l8-del{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;
@@ -691,14 +662,12 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l8-lb-close{position:absolute;top:16px;right:20px;width:40px;height:40px;border-radius:50%;background:#fff;border:none;font-size:20px;cursor:pointer;font-weight:900}
 .l8-lb-count{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);color:#fff;font-weight:900;font-size:14px;background:rgba(0,0,0,.4);padding:4px 14px}
 
-@media (max-aspect-ratio:4/5){
- .l8-rack{width:26%}
-}
+
 /* ========================================================
    页面⑩：作品提交 · 从12张实拍照片里选一张（v-l9）
    ======================================================== */
 #v-l9.on{display:flex;flex-direction:column;padding:16px 16px 84px}
-.wu-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:6px}
+.wu-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:6px}
 .wu-sub{font-size:13px;font-weight:700;color:#3a4a6b;margin-top:2px}
 
 .wu-stage{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -739,20 +708,18 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .wu-close.on{opacity:1;pointer-events:auto}
 .wu-confirm-row{position:fixed;left:50%;bottom:8%;transform:translateX(-50%);z-index:82;opacity:0;pointer-events:none;transition:opacity .25s ease .1s}
 .wu-confirm-row.on{opacity:1;pointer-events:auto}
-.wu-zoomtip{position:fixed;left:50%;bottom:3%;transform:translateX(-50%);z-index:82;color:#fff;font-size:12px;font-weight:700;opacity:0;transition:opacity .25s ease;pointer-events:none}
+.wu-zoomtip{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);z-index:82;color:#fff;font-size:12px;font-weight:700;opacity:0;transition:opacity .25s ease;pointer-events:none}
 .wu-zoomtip.on{opacity:.85}
 
-@media (max-aspect-ratio:4/5){
- .wu-arrow{width:36px;height:36px;font-size:15px}
-}
+
 /* ========================================================
    页面⑪：作品信息 · 填写照片名称/拍摄者/景别视角/拍摄意图（v-l10）
    ======================================================== */
 #v-l10.on{display:flex;flex-direction:column;padding:16px 16px 84px;align-items:center;justify-content:center}
-.l10-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:6px}
+.l10-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:6px}
 .l10-sub{font-size:13px;font-weight:700;color:#3a4a6b;margin-top:2px}
 
-#v-l10 .l10-screen{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#v-l10 .l10-screen{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
 
 .l10-stage{flex:0 0 auto;display:flex;gap:28px;align-items:flex-start;max-width:1400px;width:100%;margin:0 auto}
 .l10-photo-col{flex:0 0 auto;display:flex;align-items:flex-start;justify-content:center}
@@ -776,10 +743,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l10-empty-icon{font-size:54px;margin-bottom:10px;opacity:.6}
 .l10-empty-text{font-weight:900;font-size:22px}
 
-@media (max-aspect-ratio:4/5){
- .l10-stage{flex-direction:column;overflow-y:auto}
- .l10-photo-col{width:70%;max-width:none;margin:0 auto}
-}
+
 
 /* ========================================================
    页面⑫：云端画廊 · 3D沉浸式作品空间 + 投票 + 颁奖（v-l11）
@@ -790,8 +754,8 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .gallery3d-canvas-wrap canvas{display:block;width:100%;height:100%}
 
 .gallery3d-ui{position:absolute;inset:0;pointer-events:none;z-index:25}
-.gallery3d-title{position:absolute;top:22px;left:26px;font-size:14px;font-weight:700;letter-spacing:3px}
-.gallery3d-count{position:absolute;top:22px;right:26px;font-size:12px;font-weight:700;letter-spacing:1px;transition:transform .3s ease,opacity .3s ease}
+.gallery3d-title{position:absolute;top:16px;left:16px;font-size:14px;font-weight:700;letter-spacing:3px}
+.gallery3d-count{position:absolute;top:40px;left:16px;font-size:12px;font-weight:700;letter-spacing:1px;transition:transform .3s ease,opacity .3s ease}
 .gallery3d-count.bump{transform:scale(1.25)}
 .gallery3d-hint{position:absolute;left:0;right:0;bottom:26px;text-align:center;font-size:12px;letter-spacing:2px;color:var(--ink);opacity:0;transition:opacity 1s ease}
 .gallery3d-hint.show{opacity:.5}
@@ -811,21 +775,21 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .g3-award-btn:hover{background:#f2f4f8}
 .g3-award-btn.voted{background:var(--ink);color:#fff}
 
-.gallery3d-ceremony-btn{position:absolute;top:52px;right:26px;z-index:25;pointer-events:auto;background:none;border:1px solid var(--ink);
+.gallery3d-ceremony-btn{position:absolute;top:98px;left:16px;z-index:25;pointer-events:auto;background:none;border:1px solid var(--ink);
  color:var(--ink);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 12px;cursor:pointer}
 .gallery3d-ceremony-btn:hover{background:var(--ink);color:#fff}
-.gallery3d-upload-btn{position:absolute;top:52px;left:26px;z-index:25;pointer-events:auto;background:none;border:1px solid var(--ink);
+.gallery3d-upload-btn{position:absolute;top:62px;left:16px;z-index:25;pointer-events:auto;background:none;border:1px solid var(--ink);
  color:var(--ink);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 12px;cursor:pointer}
 .gallery3d-upload-btn:hover{background:var(--ink);color:#fff}
 
 /* ---- 颁奖台（v-l12）：像素阶梯领奖台风格，和主页面风格保持一致 ---- */
 #v-l12.on{display:flex;flex-direction:column;padding:16px 16px 84px;align-items:center}
-.l12-wrap{width:100%;max-width:98vw;margin:0 auto;height:100%;display:flex;flex-direction:column;align-items:center}
-.l12-podium-row{flex:1;min-height:0;display:flex;align-items:flex-end;justify-content:center;gap:14px;width:100%;max-width:1200px}
+.l12-wrap{width:100%;max-width:98vw;margin:0 auto;min-height:100%;display:flex;flex-direction:column;align-items:center}
+.l12-podium-row{flex:0 0 auto;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:14px;width:100%;max-width:1200px}
 
-.l12-step{display:flex;flex-direction:column;align-items:center;flex:1;max-width:200px;min-width:0}
-.l12-step-card{background:var(--panel);border:4px solid var(--ink);box-shadow:4px 4px 0 rgba(27,36,71,.7);padding:8px;width:100%;margin-bottom:-4px;z-index:3;position:relative}
-.l12-award-name{font-weight:900;font-size:12px;text-align:center;margin-bottom:5px;color:var(--purple);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.l12-step{display:flex;flex-direction:row;align-items:stretch;flex:0 0 auto;max-width:none;min-width:0;gap:12px}
+.l12-step-card{background:var(--panel);border:4px solid var(--ink);box-shadow:4px 4px 0 rgba(27,36,71,.7);padding:8px;flex:1;min-width:0;position:relative}
+.l12-award-name{font-weight:900;font-size:12px;text-align:center;margin-bottom:5px;color:var(--purple)}
 .l12-step-photo{width:100%;aspect-ratio:4/3;background:#000;border:3px solid var(--ink);overflow:hidden;position:relative}
 .l12-step-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .l12-step-photo.empty{display:flex;align-items:center;justify-content:center;color:#9aa3ae;font-size:11px;background:var(--panel2)}
@@ -833,32 +797,28 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l12-step-author{font-size:10px;color:#3a4a6b;text-align:center;font-weight:700}
 .l12-step-count{font-size:10px;color:#8a7a4a;text-align:center;margin-top:2px;font-weight:900}
 
-.l12-riser{width:100%;border:4px solid var(--ink);border-top:none;box-shadow:4px 4px 0 rgba(27,36,71,.7);
- display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex:0 0 auto}
+.l12-riser{width:56px;flex:0 0 auto;border:4px solid var(--ink);box-shadow:4px 4px 0 rgba(27,36,71,.7);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;overflow:hidden}
 .l12-riser::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 6px,transparent 6px 12px)}
-.l12-riser-num{font-size:min(4vw,32px);font-weight:900;color:var(--ink);text-shadow:2px 2px 0 rgba(255,255,255,.4);z-index:1}
+.l12-riser-num{font-size:26px;font-weight:900;color:var(--ink);text-shadow:2px 2px 0 rgba(255,255,255,.4);z-index:1}
 
-.l12-step.l12-center .l12-riser{height:min(20vh,150px);background:var(--coin)}
-.l12-step.l12-inner .l12-riser{height:min(14vh,104px);background:var(--silver)}
-.l12-step.l12-outer .l12-riser{height:min(9vh,64px);background:var(--brown)}
+.l12-step.l12-center .l12-riser{background:var(--coin)}
+.l12-step.l12-inner .l12-riser{background:var(--silver)}
+.l12-step.l12-outer .l12-riser{background:var(--brown)}
 .l12-step.l12-center .l12-step-card{border-color:var(--coinD);box-shadow:4px 4px 0 var(--coinD)}
 
-.l12-medal{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:32px;height:32px;border-radius:50%;
+.l12-medal{position:relative;width:32px;height:32px;border-radius:50%;
  border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:15px;z-index:4}
 .l12-step.l12-center .l12-medal{background:var(--coin)}
 .l12-step.l12-inner .l12-medal{background:var(--silver)}
 .l12-step.l12-outer .l12-medal{background:var(--brown);color:#fff}
 
-@media (max-aspect-ratio:4/5){
- .l12-podium-row{flex-wrap:wrap;align-items:flex-start;overflow-y:auto}
- .l12-step{max-width:44%}
- .l12-step .l12-riser{height:44px!important}
-}
+
 
 .gallery3d-label-tags{display:flex;gap:6px;margin-top:10px}
 .gallery3d-label-tag{font-size:10px;font-weight:700;color:var(--ink);border:1px solid var(--line);padding:2px 8px;letter-spacing:.5px}
 
-.gallery3d-back{position:absolute;left:26px;bottom:26px;z-index:26;background:none;border:none;color:var(--ink);
+.gallery3d-back{position:absolute;left:26px;bottom:40px;z-index:26;background:none;border:none;color:var(--ink);
  font-family:inherit;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s ease}
 .gallery3d-back.show{opacity:.75;pointer-events:auto}
 
@@ -870,7 +830,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .gallery3d-zoom.show{background:rgba(10,14,24,.92);pointer-events:auto;cursor:zoom-out}
 .gallery3d-zoom img{max-width:88vw;max-height:86vh;object-fit:contain;opacity:0;transform:scale(.92);transition:opacity .3s ease,transform .3s ease}
 .gallery3d-zoom.show img{opacity:1;transform:scale(1)}
-.gallery3d-zoom-close{position:fixed;top:20px;right:24px;z-index:71;width:38px;height:38px;border-radius:50%;background:#fff;border:none;
+.gallery3d-zoom-close{position:fixed;top:80px;right:16px;z-index:71;width:38px;height:38px;border-radius:50%;background:#fff;border:none;
  font-size:16px;font-weight:900;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .gallery3d-zoom-close.show{opacity:1;pointer-events:auto}
 .gallery3d-back:hover{opacity:1}
@@ -893,25 +853,80 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    ======================================================== */
 #v-l13.on{display:flex;flex-direction:column;padding:16px 16px 84px;align-items:center;justify-content:center}
 .l13-wrap{width:100%;max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
-.l13-title{font-weight:900;font-size:min(3.2vw,24px);line-height:1.5;color:#fff;text-align:center;margin:8px 0 0;
+.l13-title{font-weight:900;font-size:24px;line-height:1.5;color:#fff;text-align:center;margin:8px 0 0;
  text-shadow:2px 0 var(--ink),-2px 0 var(--ink),0 2px var(--ink),0 -2px var(--ink),2px 2px var(--ink),-2px 2px var(--ink),2px -2px var(--ink),-2px -2px var(--ink)}
 .l13-list{display:flex;flex-direction:column;gap:12px}
 .l13-row{display:flex;align-items:center;gap:16px;background:var(--panel);border:4px solid var(--ink);box-shadow:4px 4px 0 rgba(27,36,71,.7);padding:12px 18px}
-.l13-key{flex:0 0 auto;min-width:100px;font-weight:900;font-size:min(3vw,19px);color:var(--purple);text-align:center;
+.l13-key{flex:0 0 auto;min-width:100px;font-weight:900;font-size:19px;color:var(--purple);text-align:center;
  background:var(--panel2);border:3px solid var(--ink);padding:8px 6px}
-.l13-desc{flex:1;font-weight:700;font-size:min(2.4vw,16px);color:var(--ink);line-height:1.5}
+.l13-desc{flex:1;font-weight:700;font-size:16px;color:var(--ink);line-height:1.5}
 .l13-next{background:var(--ink);color:#fff;border:4px solid var(--coinD);box-shadow:4px 4px 0 rgba(0,0,0,.4);padding:14px 20px;text-align:center}
 .l13-next-label{font-weight:900;font-size:12px;color:var(--coin);letter-spacing:3px;margin-bottom:6px}
-.l13-next-text{font-weight:900;font-size:min(2.6vw,17px);line-height:1.5}
+.l13-next-text{font-weight:900;font-size:17px;line-height:1.5}
 .l13-title p,.l13-desc p,.l13-next-text p{margin:0}
 .l13-row.pending,.l13-next.pending{visibility:hidden;opacity:0}
 .l13-row,.l13-next{transition:opacity .3s ease}
 .l13-btn-row{display:flex;justify-content:center;padding-top:4px}
 
-@media (max-aspect-ratio:4/5){
+
+/* ======== 手机竖屏专用规则集中放在这里，保证层叠顺序里排在所有页面基础样式之后 ======== */
+
+
+ .l2-stage{flex-direction:column;justify-content:center}
+ .l2-right{width:85%;max-width:none;flex:none}
+ .l2-slots{grid-template-columns:1fr 1fr}
+ .l2-slot{aspect-ratio:auto;height:9vh}
+ .l2-opt{padding:5px 10px;font-size:15px}
+ .l2-right{gap:8px}
+
+
+
+ .l4-stage{flex-direction:column}
+ .l4-left{flex:1.3}
+ .l4-right{flex:none;width:100%;gap:10px}
+ .l4-opts{flex-direction:row;flex-wrap:wrap}
+ .l4-opt{flex:1 1 40%;padding:10px 8px;font-size:15px}
+
+
+
+ .l5-stage{flex-direction:column;align-items:center}
+ .l5-rig{width:85%;flex:1;min-height:160px}
+ .l5-vfwrap{width:85%}
+
+
+
+ .l6-grid{flex-direction:column}
+
+
+
+ .l7-observe-row{gap:6px}
+ .l7-observe-btn{min-width:60px;font-size:14px}
+ .l7-steps{font-size:14px}
+
+
+
+ .l8-rack{width:26%}
+
+
+
+ .wu-arrow{width:36px;height:36px;font-size:15px}
+
+
+
+ .l10-stage{flex-direction:column;overflow-y:auto}
+ .l10-photo-col{width:70%;max-width:none;margin:0 auto}
+
+
+
+/* 颁奖台已经改成纵向单列布局（见上面 .l12-podium-row 等规则），
+   这里不再需要单独的宽度/高度覆盖 */
+
+
+
  .l13-row{flex-direction:column;align-items:flex-start;gap:8px}
  .l13-key{align-self:flex-start}
-}
+
+
 </style>
 </head>
 <body>
@@ -1512,7 +1527,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
   <div class="l7-stage l7-stage-task">
    <div class="l1-head">
     <span class="l1-chip">摄影师任务</span>
-    <h1 class="l1-title" style="font-size:min(3.6vw,26px)">出去之前，再多看一眼光。</h1>
+    <h1 class="l1-title" style="font-size:26px">出去之前，再多看一眼光。</h1>
     <div class="l7-sub">找一个因为光线而变得特别的校园角落。</div>
    </div>
    <div class="l7-steps">找景别 → 选视角 → 看光影 → 按下快门</div>
@@ -1641,8 +1656,8 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
       <label>景别</label>
       <div class="l10-opt-row" id="l10ShotRow">
        <button class="l10-opt-btn" data-v="远景">远景</button>
+       <button class="l10-opt-btn" data-v="全景">全景</button>
        <button class="l10-opt-btn" data-v="中景">中景</button>
-       <button class="l10-opt-btn" data-v="近景">近景</button>
        <button class="l10-opt-btn" data-v="特写">特写</button>
       </div>
      </div>
@@ -1928,7 +1943,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    ======================================================== */
 const $=s=>document.querySelector(s);
 /* 景别四张照片的文件名——"景别滑杆"、"景别图鉴"、"公众号配图挑战"三处共用同一套，
-   按 0=远景/1=中景/2=近景/3=特写 的顺序对应，以后想换照片文件名，改这一个数组就行 */
+   按 0=远景/1=全景/2=中景/3=特写 的顺序对应，以后想换照片文件名，改这一个数组就行 */
 const SCENE_FILES=['scene-wide.jpg','scene-building.jpg','scene-window.jpg','scene-brick.jpg'];
 const $$=s=>Array.prototype.slice.call(document.querySelectorAll(s));
 function LSget(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -3027,8 +3042,6 @@ function l8LayoutRacks(){
    const div=document.createElement('div');
    div.className='l8-polaroid';
    const rot=L8_ROT_SEQ[i%L8_ROT_SEQ.length];
-   div.style.left=(col*colW + colW*0.08)+'px';
-   div.style.top=(row*rowH + rowH*0.08)+'px';
    div.style.width=(colW*0.84)+'px';
    div.style.transform='rotate('+rot+'deg)';
    div.dataset.id=p.id;
@@ -3545,7 +3558,7 @@ function l11MakeDemoArtworks(n){
    title:'作品 No.'+(i+1),
    author:['小明','小红','小刚','小雨','小艺'][i%5],
    className:L11_DEMO_CLASSES[i%L11_DEMO_CLASSES.length],
-   scale:['远景','中景','近景','特写'][i%4],
+   scale:['远景','全景','中景','特写'][i%4],
    angle:['仰拍','平拍','俯拍'][i%3],
    description:'这是一段示例的拍摄意图说明文字，用来测试标签排版效果是否合适。',
    createdAt:Date.now()-i*60000
