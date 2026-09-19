@@ -41,12 +41,12 @@ body{background:linear-gradient(#a8dcf7,#7ec8f0 55%,#c8ecff);font-family:"PingFa
        flex/grid 自己把内容排布进这个安全区域，不够就缩字号/间距，
        不能溢出，也不能大片留白。
    ======================================================== */
-#app{position:fixed;inset:0;z-index:3}
+#app{position:fixed;top:0;left:0;right:0;z-index:3;height:100%}
 /* 手机竖屏版：滚动统一交给最外层 .view 处理（见下面 .view 规则），
    内层每一页的容器不再单独设置 overflow/max-height，让内容按自然高度撑开、
    由外层 .view 整体滚动，避免出现双重滚动容器 */
 .view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;-webkit-overflow-scrolling:touch}
-.view.on{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px 12px 44px;animation:viewIn .3s steps(5);min-height:100%}
+.view.on{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px 12px 84px;animation:viewIn .3s steps(5);min-height:100%}
 @keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .wrap{width:100%;max-width:780px;margin:0 auto;max-height:100%}
 
@@ -68,7 +68,6 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .mini.warn{color:var(--red);border-color:var(--red)}
 
 /* ---- 顶部音乐按钮 / 底部提示条（悬浮控件，所有页面共用） ---- */
-#musicBtn{position:fixed;right:14px;top:12px;z-index:60;width:54px;height:54px;background:var(--panel);border:4px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-size:24px;cursor:pointer}
 #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--coin);border:3px solid var(--coin);box-shadow:4px 4px 0 rgba(0,0,0,.4);padding:10px 20px;font-weight:900;font-size:16px;opacity:0;transition:.25s;z-index:92;pointer-events:none;max-width:86vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%)}
 
@@ -611,11 +610,11 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 
 .l8-viewfinder{position:relative;width:100%;flex:1;min-height:0;aspect-ratio:4/3;background:#0c0f14;border:4px solid var(--ink);overflow:hidden}
 .l8-viewfinder video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
-.l8-vf-msg{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;
- background:rgba(18,22,38,.94);color:#fff;text-align:center;padding:5% 8%;font-weight:700;font-size:15px;line-height:1.6}
-.l8-vf-msg.show{display:flex}
-.l8-vf-msg .btn{font-size:13px;min-height:40px;padding:6px 16px}
-.l8-count{position:absolute;right:8px;bottom:6px;color:#fff;font-size:11px;font-weight:900;background:rgba(0,0,0,.45);padding:2px 9px;letter-spacing:.5px;z-index:3}
+.l8-vf-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;
+ background:#0e1530;color:#fff;text-align:center;padding:5% 8%}
+.l8-vf-icon{font-size:min(12vw,48px);opacity:.5}
+.l8-vf-tip{font-weight:700;font-size:14px;line-height:1.6;opacity:.75}
+.l8-count{position:absolute;right:8px;top:6px;color:#fff;font-size:11px;font-weight:900;background:rgba(0,0,0,.45);padding:2px 9px;letter-spacing:.5px;z-index:3}
 
 .l8-shutter-row{flex:0 0 auto;margin-top:3%;display:flex;align-items:center;justify-content:center;gap:12px}
 .l8-upload-btn{border:2px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font-family:inherit;font-weight:700;font-size:12px;
@@ -628,7 +627,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l8-shutter:disabled{opacity:.4;cursor:not-allowed}
 
 /* ---- 左右照片墙：绝对定位，不参与相机布局；每侧2列 ---- */
-.l8-rack{position:static;width:100%;max-width:340px;display:flex;flex-wrap:wrap;gap:16px 12px;justify-content:center;padding:4px 0}
+.l8-rack{position:static;width:100%;max-width:380px;display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center;padding:4px 0}
 .l8-rack-left{order:2}
 .l8-rack-right{order:3}
 .l8-polaroid{position:relative;background:#fff;border:1px solid #e2e2e2;box-shadow:2px 3px 8px rgba(0,0,0,.28);
@@ -866,13 +865,14 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 .l13-title p,.l13-desc p,.l13-next-text p{margin:0}
 .l13-row.pending,.l13-next.pending{visibility:hidden;opacity:0}
 .l13-row,.l13-next{transition:opacity .3s ease}
-.l13-btn-row{display:flex;justify-content:center;padding-top:4px}
+.l13-btn-row{display:flex;justify-content:center;padding-top:4px;margin-bottom:20px}
 
 
 /* ======== 手机竖屏专用规则集中放在这里，保证层叠顺序里排在所有页面基础样式之后 ======== */
 
 
  .l2-stage{flex-direction:column;justify-content:center}
+ .l2-viewwrap{width:85%}
  .l2-right{width:85%;max-width:none;flex:none}
  .l2-slots{grid-template-columns:1fr 1fr}
  .l2-slot{aspect-ratio:auto;height:9vh}
@@ -905,7 +905,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 
 
 
- .l8-rack{width:26%}
+ /* .l8-rack 宽度已经在上面统一定义为100%/380px上限，这里不再需要单独覆盖 */
 
 
 
@@ -989,7 +989,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 
  <div class="home-content">
   <div class="home-video-box">
-   <video id="homeVideo" class="home-video" playsinline controls>
+   <video id="homeVideo" class="home-video" playsinline controls preload="metadata">
     <source src="photos/intro.mp4" type="video/mp4">
    </video>
    <div class="home-video-placeholder" id="homeVideoPh">
@@ -1090,7 +1090,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    <div class="l2-viewwrap" id="l2ViewWrap">
     <div class="l2-viewfinder" id="l2ViewFinder">
      <div class="l2-scene show" data-i="0">
-      <img class="l2-photo" src="photos/scene-wide.jpg" alt="" onerror="this.style.display='none'">
+      <picture><source srcset="photos/scene-wide.webp" type="image/webp"><img class="l2-photo" src="photos/scene-wide.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
       <div class="l2-sky"></div>
       <div class="l2-tree" style="left:10%;width:6%"></div>
       <div class="l2-tree" style="left:82%;width:6%"></div>
@@ -1099,7 +1099,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
       <div class="l2-ground"></div>
      </div>
      <div class="l2-scene" data-i="1">
-      <img class="l2-photo" src="photos/scene-building.jpg" alt="" onerror="this.style.display='none'">
+      <picture><source srcset="photos/scene-building.webp" type="image/webp"><img class="l2-photo" src="photos/scene-building.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
       <div class="l2-sky" style="height:34%"></div>
       <div class="l2-bldg" style="left:10%;top:34%;width:80%;height:46%"></div>
       <div class="l2-roof" style="left:5%;top:14%;border-left:45% solid transparent;border-right:45% solid transparent;border-bottom:20% solid #e5453c"></div>
@@ -1109,7 +1109,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
       <div class="l2-ground"></div>
      </div>
      <div class="l2-scene" data-i="2">
-      <img class="l2-photo" src="photos/scene-window.jpg" alt="" onerror="this.style.display='none'">
+      <picture><source srcset="photos/scene-window.webp" type="image/webp"><img class="l2-photo" src="photos/scene-window.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
       <div class="l2-bldg" style="left:0;top:0;width:100%;height:100%;border:none"></div>
       <div class="l2-win" style="left:8%;top:16%;width:22%;height:30%"></div>
       <div class="l2-win" style="left:39%;top:16%;width:22%;height:30%"></div>
@@ -1119,7 +1119,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
       <div class="l2-win" style="left:70%;top:58%;width:22%;height:30%"></div>
      </div>
      <div class="l2-scene" data-i="3">
-      <img class="l2-photo" src="photos/scene-brick.jpg" alt="" onerror="this.style.display='none'">
+      <picture><source srcset="photos/scene-brick.webp" type="image/webp"><img class="l2-photo" src="photos/scene-brick.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
       <div class="l2-brickwall"></div>
      </div>
      <div class="l2-shutter" id="l2Shutter" title="快门"></div>
@@ -1171,7 +1171,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 
   <div class="l3-grid" id="l3Grid">
    <div class="l3-tile" data-type="0">
-    <img class="l3-photo" src="photos/scene-wide.jpg" alt="" onerror="this.style.display='none'">
+    <picture><source srcset="photos/scene-wide.webp" type="image/webp"><img class="l3-photo" src="photos/scene-wide.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
     <div class="l3-fallback thumb-0"></div>
     <div class="l3-num">1</div>
     <div class="l3-hint">点击查看</div>
@@ -1187,7 +1187,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    </div>
 
    <div class="l3-tile" data-type="1">
-    <img class="l3-photo" src="photos/scene-building.jpg" alt="" onerror="this.style.display='none'">
+    <picture><source srcset="photos/scene-building.webp" type="image/webp"><img class="l3-photo" src="photos/scene-building.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
     <div class="l3-fallback thumb-1"></div>
     <div class="l3-num">2</div>
     <div class="l3-hint">点击查看</div>
@@ -1203,7 +1203,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    </div>
 
    <div class="l3-tile" data-type="2">
-    <img class="l3-photo" src="photos/scene-window.jpg" alt="" onerror="this.style.display='none'">
+    <picture><source srcset="photos/scene-window.webp" type="image/webp"><img class="l3-photo" src="photos/scene-window.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
     <div class="l3-fallback thumb-2"></div>
     <div class="l3-num">3</div>
     <div class="l3-hint">点击查看</div>
@@ -1219,7 +1219,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    </div>
 
    <div class="l3-tile" data-type="3">
-    <img class="l3-photo" src="photos/scene-brick.jpg" alt="" onerror="this.style.display='none'">
+    <picture><source srcset="photos/scene-brick.webp" type="image/webp"><img class="l3-photo" src="photos/scene-brick.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
     <div class="l3-fallback thumb-3"></div>
     <div class="l3-num">4</div>
     <div class="l3-hint">点击查看</div>
@@ -1307,7 +1307,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
  <div class="l4-flycard-inner" id="l4FlyInner">
   <div class="l4-flycard-face front"><div class="l4-qmark-box">?</div></div>
   <div class="l4-flycard-face back">
-   <img class="l4-fly-photo" id="l4FlyPhoto" src="photos/wechat-q1.jpg" alt="" onerror="this.style.display='none'">
+   <picture><source id="l4FlyPhotoWebp" srcset="photos/wechat-q1.webp" type="image/webp"><img class="l4-fly-photo" id="l4FlyPhoto" src="photos/wechat-q1.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
    <div class="l4-fly-fallback" id="l4FlyFallback"></div>
   </div>
  </div>
@@ -1372,9 +1372,9 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
     <div class="l5-viewfinder" id="l5Viewfinder">
      <div class="l5-corner tl"></div><div class="l5-corner tr"></div>
      <div class="l5-corner bl"></div><div class="l5-corner br"></div>
-     <div class="l5-scene l5-scene-low" data-z="low"><img class="l5-photo" src="photos/angle-low.jpg" alt="" onerror="this.style.display='none'"></div>
-     <div class="l5-scene l5-scene-level active" data-z="level"><img class="l5-photo" src="photos/angle-level.jpg" alt="" onerror="this.style.display='none'"></div>
-     <div class="l5-scene l5-scene-high" data-z="high"><img class="l5-photo" src="photos/angle-high.jpg" alt="" onerror="this.style.display='none'"></div>
+     <div class="l5-scene l5-scene-low" data-z="low"><picture><source srcset="photos/angle-low.webp" type="image/webp"><img class="l5-photo" src="photos/angle-low.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture></div>
+     <div class="l5-scene l5-scene-level active" data-z="level"><picture><source srcset="photos/angle-level.webp" type="image/webp"><img class="l5-photo" src="photos/angle-level.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture></div>
+     <div class="l5-scene l5-scene-high" data-z="high"><picture><source srcset="photos/angle-high.webp" type="image/webp"><img class="l5-photo" src="photos/angle-high.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture></div>
     </div>
    </div>
   </div>
@@ -1470,7 +1470,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    </div>
    <div class="l7-photo-wrap" id="l7PhotoWrap">
     <div class="l7-photo-box" id="l7SoloBox">
-     <img class="l7-photo" src="photos/photo-light-flat.jpg" alt="" onerror="this.style.display='none'">
+     <picture><source srcset="photos/photo-light-flat.webp" type="image/webp"><img class="l7-photo" src="photos/photo-light-flat.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
      <div class="l7-fallback l7-fallback-flat"></div>
     </div>
    </div>
@@ -1487,11 +1487,11 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    <div class="l7-compare-wrap" id="l7CompareWrap">
     <div class="l7-compare-box" id="l7CompareBox">
      <div class="l7-compare-base">
-      <img class="l7-photo" src="photos/photo-light-dramatic.jpg" alt="" onerror="this.style.display='none'">
+      <picture><source srcset="photos/photo-light-dramatic.webp" type="image/webp"><img class="l7-photo" src="photos/photo-light-dramatic.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
       <div class="l7-fallback l7-fallback-dramatic"></div>
      </div>
      <div class="l7-compare-over" id="l7CompareOver">
-      <img class="l7-photo" src="photos/photo-light-flat.jpg" alt="" onerror="this.style.display='none'">
+      <picture><source srcset="photos/photo-light-flat.webp" type="image/webp"><img class="l7-photo" src="photos/photo-light-flat.jpg" alt="" width="480" height="360" loading="lazy" onerror="handleStaticPhotoError(this)"></picture>
       <div class="l7-fallback l7-fallback-flat"></div>
      </div>
      <div class="l7-compare-divider" id="l7Divider"><div class="l7-compare-handle">↔</div></div>
@@ -1560,14 +1560,17 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
      <div class="l8-cam-corner tl"></div>
      <div class="l8-cam-corner tr"></div>
      <div class="l8-viewfinder" id="l8Viewfinder">
-      <video id="l8Video" autoplay playsinline muted></video>
-      <div class="l8-vf-msg" id="l8VfMsg"></div>
+      <div class="l8-vf-placeholder" id="l8VfPlaceholder">
+       <div class="l8-vf-icon">📷</div>
+       <div class="l8-vf-tip">点击下方按钮拍摄</div>
+      </div>
       <div class="l8-count" id="l8Count">0 / 12</div>
      </div>
      <div class="l8-shutter-row">
       <button class="l8-shutter" id="l8Shutter" title="拍摄"></button>
       <button class="l8-upload-btn" id="l8UploadBtn" title="从相册选照片">📁 从相册选照片</button>
       <input type="file" id="l8FileInput" accept="image/*" multiple style="display:none">
+      <input type="file" id="l8CameraInput" accept="image/*" capture="environment" style="display:none">
      </div>
     </div>
    </div>
@@ -1803,7 +1806,7 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
    </div>
   </div>
 
-  <button class="btn btn-primary" id="g3dCeremonyClose" style="margin-top:20px">← 返回画廊</button>
+  <button class="btn btn-primary" id="g3dCeremonyClose" style="margin-top:20px">继续 →</button>
  </div>
 </section>
 
@@ -1840,7 +1843,6 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 
 </div>
 
-<button id="musicBtn" title="背景音乐开关">🔇</button>
 <div id="toast"></div>
 <div id="flashOverlay"></div>
 
@@ -1941,7 +1943,47 @@ h1.t{font-size:28px;margin:12px 0 4px;font-weight:900;letter-spacing:2px;color:#
 /* ========================================================
    基础工具函数（后续页面继续复用）
    ======================================================== */
+/* 图片资源性能优化：优先尝试.webp（体积更小），失败了自动退回原来的.jpg，
+   两种情况都失败才真正隐藏——和 main2.html（横屏/桌面版）用的是同一套逻辑 */
+function setPhotoSrcWebp(imgEl, jpgPath){
+ var webpPath=jpgPath.replace(/\.jpe?g$/i,'.webp');
+ imgEl.onerror=function(){
+  imgEl.onerror=function(){ imgEl.style.display='none' }; // webp和jpg都失败，退回原来"直接隐藏"的兜底
+  imgEl.src=jpgPath;
+ };
+ imgEl.src=webpPath;
+}
+/* <picture>里的<source webp>是按"浏览器支不支持webp格式"选的，不是按"这个文件存不存在"选的——
+   哪怕对应的.webp文件是404，浏览器也不会自动退回去尝试<img>自己写的.jpg路径，
+   只会让<img>本身触发一次onerror（就像图片本身加载失败一样）。所以这里手动接管：
+   第一次报错（webp那个文件缺失/加载失败）→ 强制换成同名.jpg 再试一次；
+   第二次报错（jpg也失败）→ 才真正隐藏 */
+function handleStaticPhotoError(imgEl){
+ if(!imgEl.dataset.webpFailed){
+  imgEl.dataset.webpFailed='1';
+  var jpgPath=imgEl.getAttribute('src'); // <img>自己写的src本来就是.jpg路径
+  imgEl.removeAttribute('src'); // 先清空再重新赋值，强制浏览器真正发起一次新的加载尝试
+  imgEl.src=jpgPath;
+ }else{
+  imgEl.style.display='none';
+ }
+}
 const $=s=>document.querySelector(s);
+/* 手机浏览器（尤其iOS Safari）地址栏/工具栏会占用一部分屏幕空间，
+   普通的 100% / 100vh 高度算不进去，导致贴底部的按钮被工具栏挡住。
+   用 visualViewport 拿到真正可见的高度，动态设置给 #app，工具栏
+   出现/收起时也会跟着重新计算 */
+function updateAppHeight(){
+ var h=(window.visualViewport ? window.visualViewport.height : window.innerHeight);
+ document.getElementById('app').style.height=h+'px';
+}
+updateAppHeight();
+window.addEventListener('resize',updateAppHeight);
+window.addEventListener('orientationchange',function(){ setTimeout(updateAppHeight,300) });
+if(window.visualViewport){
+ window.visualViewport.addEventListener('resize',updateAppHeight);
+ window.visualViewport.addEventListener('scroll',updateAppHeight);
+}
 /* 景别四张照片的文件名——"景别滑杆"、"景别图鉴"、"公众号配图挑战"三处共用同一套，
    按 0=远景/1=全景/2=中景/3=特写 的顺序对应，以后想换照片文件名，改这一个数组就行 */
 const SCENE_FILES=['scene-wide.jpg','scene-building.jpg','scene-window.jpg','scene-brick.jpg'];
@@ -2044,56 +2086,8 @@ function sfx(n){
  }
 }
 const nf=m=>440*Math.pow(2,(m-69)/12);
-const THEMES={
- main:{dur:.15,leadV:.05,leadType:'square',bassV:.055,hat:2,
-  lead:[72,0,76,0,79,0,76,0,81,79,0,0,76,0,72,0,74,0,77,0,81,0,77,0,79,77,76,0,74,0,72,0],
-  bass:[48,0,0,0,52,0,0,0,53,0,0,0,52,0,0,0,50,0,0,0,53,0,0,0,55,0,0,0,55,0,0,0]},
- outdoor:{dur:.125,leadV:.05,leadType:'square',bassV:.06,hat:2,
-  lead:[65,0,69,0,72,0,74,0,72,0,69,0,65,0,62,0,65,0,69,0,72,0,77,0,76,0,74,0,72,0,69,0],
-  bass:[41,0,0,0,48,0,0,0,46,0,0,0,50,0,0,0,41,0,0,0,48,0,0,0,46,0,0,0,43,0,0,0]},
- calm:{dur:.21,leadV:.04,leadType:'triangle',bassV:.05,hat:0,
-  lead:[76,0,0,74,0,0,72,0,0,67,0,0,69,0,0,71,0,0,72,0,0,74,0,0,71,0,0,67,0,0,64,0],
-  bass:[40,0,0,0,0,0,0,0,45,0,0,0,0,0,0,0,43,0,0,0,0,0,0,0,48,0,0,0,0,0,0,0]}
-};
-const Music={on:(LSget('hx_music')!=='0'),theme:'main',step:0,nextT:0,timer:null,started:false};
-function playStep(T,i,at){
- if(T.lead[i])beep({f:nf(T.lead[i]),at:at,dur:T.dur*.85,type:T.leadType,v:T.leadV});
- if(T.bass[i])beep({f:nf(T.bass[i]),at:at,dur:T.dur*2.6,type:'triangle',v:T.bassV});
- if(T.hat&&i%T.hat===1)noise(.03,.02,at);
- if(i%8===0)beep({f:110,f2:45,at:at,dur:.1,type:'sine',v:.09});
-}
-function musicStart(){
- if(Music.started)return;
- const c=ac();if(!c)return;
- Music.started=true;
- Music.nextT=c.currentTime+.1;
- Music.timer=setInterval(musicTick,60);
-}
-function musicTick(){
- if(!Music.on||!actx)return;
- if(Music.nextT<actx.currentTime)Music.nextT=actx.currentTime+.05;
- const T=THEMES[Music.theme];
- while(Music.nextT<actx.currentTime+.18){
-  playStep(T,Music.step,Music.nextT);
-  Music.step=(Music.step+1)%32;
-  Music.nextT+=T.dur;
- }
-}
-function setTheme(t){if(Music.theme!==t){Music.theme=t;Music.step=0}}
-function updateMusicBtn(){$('#musicBtn').textContent=Music.on?'🎵':'🔇'}
-function toggleMusic(){
- Music.on=!Music.on;
- LSset('hx_music',Music.on?'1':'0');
- updateMusicBtn();
- if(Music.on){
-  ac();
-  if(!Music.started)musicStart();
-  else if(actx)Music.nextT=actx.currentTime+.05;
-  toast('🎵 背景音乐：开');
- }else{
-  toast('🔇 背景音乐：关');
- }
-}
+/* 背景音乐系统已移除（按需求只保留下面的音效反馈 sfx()），
+   setTheme() 调用点也已同步去掉，VIEW_THEME 这份数据留着不影响其它逻辑 */
 
 /* ========================================================
    页面配置 + 切页系统
@@ -2364,8 +2358,9 @@ function l2Fit(){
  const r=stage.getBoundingClientRect();
  const availW=r.width,availH=r.height;
  const sliderOverhead=70; /* 滑竿高度 + 与取景框的间距，基本是固定值 */
- const widthFrac=stacked?0.78:0.70;
- const heightBudget=(stacked?availH*0.28:availH)-sliderOverhead;
+ const widthFrac=stacked?0.85:0.70; /* 竖屏下改成85%，和右侧格子/选项的宽度对齐 */
+ const heightBudget=(stacked?availH*0.62:availH)-sliderOverhead; /* 手机版允许滚动，不用再逼着塞进一屏，
+   这里放宽很多，让宽度目标（85%）基本不会被高度反过来卡住 */
  let w=availW*widthFrac;
  const wByHeight=heightBudget/0.625; /* 取景框是16:10,height=width*0.625 */
  if(wByHeight>0)w=Math.min(w,wByHeight);
@@ -2454,7 +2449,8 @@ $$('#l2Opts .l2-opt').forEach(function(el){
    sfx('ding');
    const slot=$$('#l2Slots .l2-slot')[l2Seg]; // 四个格子固定对应四个景别的位置，不管学生按什么顺序答对
    slot.classList.add('filled');
-   slot.innerHTML='<div class="l2-thumb"><img class="l2-thumb-photo" src="photos/'+SCENE_FILES[l2Seg]+'" alt="" onerror="this.style.display=\'none\'"><div class="l2-thumb-fallback thumb-'+l2Seg+'"></div></div>';
+   slot.innerHTML='<div class="l2-thumb"><img class="l2-thumb-photo" alt="" onerror="this.style.display=\'none\'"><div class="l2-thumb-fallback thumb-'+l2Seg+'"></div></div>';
+ setPhotoSrcWebp(slot.querySelector('.l2-thumb-photo'), 'photos/'+SCENE_FILES[l2Seg]);
    if(l2Shots.every(Boolean)){
     sfx('level');
     $('#l2Shutter').classList.add('ready');
@@ -2600,7 +2596,7 @@ function flyL4QCardTo(optEl,answerIdx){
  const qr=qcard.getBoundingClientRect();
  const photo=$('#l4FlyPhoto');
  photo.className='l4-fly-photo';
- photo.src='photos/'+L4_PHOTOS[l4Q];
+ setPhotoSrcWebp(photo, 'photos/'+L4_PHOTOS[l4Q]);
  photo.style.display='';
  $('#l4FlyFallback').className='l4-fly-fallback thumb-'+answerIdx;
  inner.classList.remove('flipped');
@@ -2815,7 +2811,7 @@ function enterL6(){
   card.classList.remove('done','locked');
   const img=card.querySelector('.l6-photo');
   img.style.display=''; // 先复位，避免残留上一轮"图片不存在"时留下的隐藏状态
-  img.src='photos/'+item.photo;
+  setPhotoSrcWebp(img, 'photos/'+item.photo);
   const fb=card.querySelector('.l6-fallback');
   fb.className='l6-fallback '+item.fb;
   Array.prototype.slice.call(card.querySelectorAll('.l6-opt')).forEach(function(b){b.classList.remove('done','wrong')});
@@ -2968,8 +2964,7 @@ function enterL7(){
 /* ========================================================
    ⑨ 户外实拍 · 真实摄像头拍摄（v-l8）
    ======================================================== */
-const l8VideoEl=$('#l8Video'), l8VfMsg=$('#l8VfMsg'), l8ShutterBtn=$('#l8Shutter');
-let l8CameraReady=false, l8Stream=null;
+const l8ShutterBtn=$('#l8Shutter');
 const L8_CAM_K=0.93;
 const MAX_PHOTOS=12, MAX_PER_SIDE=6;
 let l8Photos=[], l8PhotoSeq=0;
@@ -2996,41 +2991,13 @@ function l8Fit(){
 }
 window.addEventListener('resize',function(){ if(currentViewId()==='v-l8')l8Fit() });
 
-function l8ShowVfMsg(html){ l8VfMsg.innerHTML=html; l8VfMsg.classList.add('show') }
-function l8HideVfMsg(){ l8VfMsg.classList.remove('show'); l8VfMsg.innerHTML='' }
-
-async function l8InitCamera(){
- if(l8Stream)return; // 已经开着就不用重复请求
- if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){
-  l8ShowVfMsg('当前设备暂不支持摄像头拍摄。');
-  l8ShutterBtn.disabled=true;
-  return;
- }
- try{
-  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
-  l8Stream=stream;
-  l8VideoEl.srcObject=stream;
-  l8CameraReady=true;
-  l8HideVfMsg();
-  l8ShutterBtn.disabled=false;
- }catch(err){
-  l8CameraReady=false;
-  l8ShowVfMsg('需要打开摄像头，才能开始拍摄。<button class="btn btn-primary" id="l8Retry">重新开启摄像头</button>');
-  l8ShutterBtn.disabled=true;
-  const retry=document.getElementById('l8Retry');
-  if(retry)retry.onclick=l8InitCamera;
- }
-}
-function stopL8Camera(){
- if(l8Stream){
-  l8Stream.getTracks().forEach(function(t){t.stop()});
-  l8Stream=null;
- }
- l8CameraReady=false;
-}
+/* 拍摄改成直接调用手机自带的相机App：点快门＝触发一个
+   capture="environment" 的文件选择器，系统会弹出原生相机，
+   拍完/确认后浏览器自动带着这张照片回到本页面，不需要额外处理"返回"逻辑，
+   也不再需要 getUserMedia 实时预览、不需要摄像头权限 */
 
 function l8LayoutRacks(){
- const cols=2, rows=Math.ceil(MAX_PER_SIDE/cols);
+ const cols=3, rows=Math.ceil(MAX_PER_SIDE/cols);
  [{el:$('#l8RackLeft'), list:l8Photos.slice(0,MAX_PER_SIDE)},
   {el:$('#l8RackRight'), list:l8Photos.slice(MAX_PER_SIDE,MAX_PHOTOS)}
  ].forEach(function(group){
@@ -3084,33 +3051,44 @@ function l8EjectPhoto(url){
 }
 
 function l8Capture(){
- if(!l8CameraReady){toast('摄像头还没准备好');return}
  if(l8Photos.length>=MAX_PHOTOS){
   toast('已经拍了12张。先删掉一张，再继续拍摄。');
   return;
  }
- sfx('shutter');
- const canvas=$('#l8Canvas');
- const vw=l8VideoEl.videoWidth||640, vh=l8VideoEl.videoHeight||480;
- const targetRatio=4/3;
- let sx=0, sy=0, sw=vw, sh=vh;
- if(vw/vh > targetRatio){ sw=vh*targetRatio; sx=(vw-sw)/2 }
- else{ sh=vw/targetRatio; sy=(vh-sh)/2 }
- canvas.width=480; canvas.height=360;
- const ctx=canvas.getContext('2d');
- ctx.drawImage(l8VideoEl, sx,sy,sw,sh, 0,0,480,360);
- const url=canvas.toDataURL('image/jpeg',0.85);
-
- l8PhotoSeq++;
- l8Photos.push({id:'p'+l8PhotoSeq, url:url});
- l8EjectPhoto(url);
- l8LayoutRacks();
- cameraFlash(function(){}); // 快门白闪反馈，复用全站统一的转场闪光
-
- l8ShutterBtn.disabled=true;
- setTimeout(function(){ if(l8CameraReady)l8ShutterBtn.disabled=false },400);
+ $('#l8CameraInput').click(); // 直接唤起手机自带的相机App
 }
 l8ShutterBtn.addEventListener('click',l8Capture);
+
+async function l8OnCameraPhotoTaken(file){
+ if(!file)return;
+ try{
+  const img=await l8LoadImageFile(file);
+  const canvas=$('#l8Canvas');
+  const vw=img.naturalWidth, vh=img.naturalHeight;
+  const targetRatio=4/3;
+  let sx=0, sy=0, sw=vw, sh=vh;
+  if(vw/vh > targetRatio){ sw=vh*targetRatio; sx=(vw-sw)/2 }
+  else{ sh=vw/targetRatio; sy=(vh-sh)/2 }
+  canvas.width=480; canvas.height=360;
+  const ctx=canvas.getContext('2d');
+  ctx.drawImage(img, sx,sy,sw,sh, 0,0,480,360);
+  const url=canvas.toDataURL('image/jpeg',0.85);
+
+  sfx('shutter');
+  l8PhotoSeq++;
+  l8Photos.push({id:'p'+l8PhotoSeq, url:url});
+  l8EjectPhoto(url);
+  l8LayoutRacks();
+  cameraFlash(function(){}); // 快门白闪反馈，复用全站统一的转场闪光
+ }catch(err){
+  console.error('处理拍摄照片失败',err);
+  toast('这张照片处理失败，请重新拍一张');
+ }
+}
+$('#l8CameraInput').addEventListener('change',function(e){
+ l8OnCameraPhotoTaken(e.target.files[0]);
+ e.target.value=''; // 清空，保证下次拍同样内容也能再次触发change
+});
 
 /* ========================================================
    从相册导入照片——给"老师带着网络离开教室"这种场景多一条退路：
@@ -3194,7 +3172,6 @@ $('#btnL8Continue').onclick=function(){
 
 function enterL8(){
  l8Fit();
- l8InitCamera(); // 内部已做"已经开着就不重复请求"的保护，可以放心每次进入都调用
 }
 
 /* ========================================================
@@ -4215,8 +4192,8 @@ $('#g3dCeremonyBtn').addEventListener('click',function(){
                 // 应该和"上一页/下一页"一样把全班带过去，学生自己点则只影响自己
 });
 $('#g3dCeremonyClose').addEventListener('click',function(){
- sfx('click');
- goto('v-l11');
+ sfx('shutter');
+ cameraFlash(advanceFromHere);
 });
 $('#g3dUploadBtn').addEventListener('click',function(){
  sfx('click');
@@ -4398,7 +4375,6 @@ function enterL11(){
 function show(id){
  const prevId=currentViewId();
  if(prevId==='v-l11' && id!=='v-l11' && l11Booted)l11Paused=true; // 离开这一页就暂停3D渲染循环
- if(prevId==='v-l8' && id!=='v-l8')stopL8Camera(); // 离开这一页就关掉摄像头，释放硬件
  if(prevId==='v-l9' && id!=='v-l9')clearInterval(l9AutoTimer); // 离开这一页就停止轮播计时器
  if(prevId==='v-l4' && id!=='v-l4')$('#l4FlyCard').classList.add('hidden'); // 离开第四关时强制收起飞行卡片，
                                                                               // 避免中途跳页（比如老师用控制台直接跳关）导致
@@ -4407,7 +4383,6 @@ function show(id){
  const t=document.getElementById(id);
  if(!t)return;
  t.classList.add('on');
- setTheme(VIEW_THEME[id]||'main');
  if(userGestured&&VIEW_SFX[id])sfx(VIEW_SFX[id]);
  const fn=REFRESH[id];
  if(fn){try{fn()}catch(err){console.error(err)}}
@@ -4689,11 +4664,8 @@ document.addEventListener('click',function(){
  if(!userGestured){
   userGestured=true;
   ac();
-  if(Music.on)musicStart();
  }
 },{once:true});
-
-$('#musicBtn').onclick=toggleMusic;
 
 $('#teacherGate').onclick=onGateClick;
 $('#btnPwOk').onclick=submitTeacherPassword;
@@ -4764,11 +4736,12 @@ $('#btnClearGalleryConfirm').onclick=async function(){
 
 $('#homeDlg').onclick=homeDlgAdvance;
 $('#homeVideo').addEventListener('loadeddata',function(){$('#homeVideoPh').classList.add('hidden')});
+$('#homeVideo').addEventListener('loadedmetadata',function(){$('#homeVideoPh').classList.add('hidden')}); // preload="metadata"只保证这个事件一定会触发，
+                                                                                                            // 不保证loadeddata（第一帧画面）也触发，两个都监听才不会让占位提示卡住
 $('#homeVideo').addEventListener('error',function(){$('#homeVideoPh').classList.remove('hidden')},true);
 
 $('#btnStudentEnter').onclick=studentLocalAdvance;
 
-updateMusicBtn();
 applyRoomUI();
 renderStageJump();
 show('v-title');
